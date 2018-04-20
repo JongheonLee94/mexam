@@ -1,10 +1,7 @@
 package kr.ac.jejunu;
 
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 
 public class JdbcContext {
     final DataSource dataSource;
@@ -60,7 +57,7 @@ public class JdbcContext {
         return product;
     }
 
-    Long insert(StatementStrategy statementStrategy) throws SQLException {
+    Long contextInsert(StatementStrategy statementStrategy) throws SQLException {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
@@ -104,7 +101,7 @@ public class JdbcContext {
         return id;
     }
 
-    void update(StatementStrategy statementStrategy) throws SQLException {
+    void contextUpdate(StatementStrategy statementStrategy) throws SQLException {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         try {
@@ -130,5 +127,41 @@ public class JdbcContext {
                 }
             }
         }
+    }
+
+    Product queryForObject(String sql, Object[] params) throws SQLException {
+        StatementStrategy statementStrategy = connection -> {
+            PreparedStatement preparedStatement = connection.prepareStatement( sql );
+            for(int i= 0;i<params.length;i++){
+                preparedStatement.setObject( i+1,params[i] );
+            }
+            return preparedStatement;
+        };
+        return get( statementStrategy );
+    }
+
+    void update(String sql, Object[] params) throws SQLException {
+        StatementStrategy statementStrategy = connection -> {
+
+            PreparedStatement preparedStatement = connection.prepareStatement( sql );
+            for(int i= 0;i<params.length;i++){
+                preparedStatement.setObject( i+1,params[i] );
+            }
+            return preparedStatement;
+        };
+
+        contextUpdate( statementStrategy );
+    }
+
+    Long insert(String sql, Object[] params) throws SQLException {
+        StatementStrategy statementStrategy = connection -> {
+            PreparedStatement preparedStatement = connection.prepareStatement( sql, Statement.RETURN_GENERATED_KEYS);
+            for(int i= 0;i<params.length;i++){
+                preparedStatement.setObject( i+1,params[i] );
+            }
+
+            return preparedStatement;
+        };
+        return contextInsert( statementStrategy );
     }
 }
