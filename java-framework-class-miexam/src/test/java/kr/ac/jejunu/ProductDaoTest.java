@@ -8,7 +8,9 @@ import org.springframework.context.annotation.Bean;
 
 import java.sql.SQLException;
 
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
 public class ProductDaoTest {
     ProductDao productDao;
@@ -43,5 +45,36 @@ public class ProductDaoTest {
         assertEquals(product.getTitle(), insertedproduct.getTitle());
         assertEquals(product.getPrice(), insertedproduct.getPrice());
     }
+    @Test
+    public void update() throws SQLException {
+        Product product=new Product();
+        product.setTitle( "오메기떡" );
+        product.setPrice( 10000 );
+        Long id = productDao.insert(product);
 
+        product.setId( id );
+        product.setTitle( "돌하르방" );
+        product.setPrice( 89990 );
+        productDao.update(product);
+
+        Product updatedproduct = productDao.get(id);
+        assertEquals(id, updatedproduct.getId());
+        assertEquals(product.getTitle(), updatedproduct.getTitle());
+        assertEquals(product.getPrice(), updatedproduct.getPrice());
+    }
+
+    @Test
+    public void delete() throws SQLException {
+        Product product=new Product();
+        product.setTitle( "오메기떡" );
+        product.setPrice( 10000 );
+        Long id = productDao.insert(product);
+
+        product.setId( id );
+
+        productDao.delete(product);
+
+        Product deletedProduct = productDao.get(id);
+        assertThat( deletedProduct,nullValue() );
+    }
 }
