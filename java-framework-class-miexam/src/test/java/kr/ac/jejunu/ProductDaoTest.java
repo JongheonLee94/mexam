@@ -12,7 +12,6 @@ import static org.junit.Assert.assertEquals;
 
 public class ProductDaoTest {
     ProductDao productDao;
-    DaoFactory daoFactory;
 
     @Before
     public void setup() {
