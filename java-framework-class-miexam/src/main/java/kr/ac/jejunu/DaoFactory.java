@@ -22,7 +22,11 @@ public class DaoFactory {
 
     @Bean
     public ProductDao productDao() throws ClassNotFoundException {
-        return new ProductDao(dataSource());
+        return new ProductDao(jdbcContext());
+    }
+
+    private JdbcContext jdbcContext() throws ClassNotFoundException {
+        return new JdbcContext( dataSource() );
     }
 
     private DataSource dataSource() throws ClassNotFoundException {
