@@ -12,13 +12,13 @@ import java.sql.Driver;
 @Configuration
 public class DaoFactory {
     @Value( "${db.classname}" )
-    String className = "com.mysql.jdbc.Driver";
+    String className;
     @Value( "${db.url}" )
-    String url = "jdbc:mysql://localhost/jeju";
+    String url;
     @Value( "${db.username}" )
-    String userName = "jeju";
+    String userName;
     @Value( "${db.password}" )
-    String password = "jejupw";
+    String password;
 
     @Bean
     public ProductDao productDao() throws ClassNotFoundException {
